@@ -43,3 +43,10 @@ def print_ok(message):
     """
     print('\033[92m'+message+'\033[0m')
 
+def print_hints(message):
+    """Print hints
+
+    :message: (str) hints
+
+    """
+    print('  '+message)
