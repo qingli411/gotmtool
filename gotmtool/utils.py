@@ -28,7 +28,7 @@ def print_error(message):
     print('\033[91mERROR: '+message+'\033[0m')
 
 def print_warning(message):
-    """Print warning message in bluw
+    """Print warning message in blue
 
     :message: (str) warning message
 
