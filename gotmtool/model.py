@@ -117,15 +117,32 @@ class Model:
             print('make install')
             proc = sp.run(['make','install'], cwd=self.environ['gotmdir_build'], check=True, stdout=sp.PIPE, text=True)
             print('\n'+proc.stdout+'\n')
-            if proc.returncode == 0:
-                print_ok('Done!')
+            print_ok('Done!')
         else:
             print_warning('GOTM is updated. Skipping the build step. Use \'clean=True\' to rebuild')
 
-    def run(self):
-        """TODO: Docstring for run.
-        :returns: TODO
+    def run(
+            self,
+            quiet=True,
+            ):
+        """Run the model
+
+        :quiet:  (bool) flag to run the model quietly and write a log, otherwise print the log on screen
 
         """
-        pass
+        # create run directory
+        rundir = self.environ['gotmdir_run']+'/'+self.name
+        os.makedirs(rundir, exist_ok=True)
+        # write yaml configuration file
+        yaml_dump(self.config, rundir+'/gotm.yaml')
+        # run the model
+        proc = sp.run(self._exe, cwd=rundir, check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+        if quiet:
+            # write to log
+            with open(rundir+'/gotm.log', 'w') as f:
+                f.write(proc.stdout)
+        else:
+            # print on screen
+            print('\n'+proc.stdout+'\n')
+            print_ok('Done!')
 
