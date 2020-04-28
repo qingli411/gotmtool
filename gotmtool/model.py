@@ -78,7 +78,7 @@ class Model:
 
     def build(
             self,
-            force = False,
+            clean = False,
             use_cvmix = True,
             use_fabm = False,
             use_stim = False,
@@ -87,7 +87,7 @@ class Model:
             ):
         """Build GOTM source code
 
-        :force:        (bool) flag to force the build
+        :clean:        (bool) flag to force a clean build
         :use_cvmix:    (bool) flag to compile GOTM with CVMix
         :use_fabm:     (bool) flag to compile GOTM with FABM
         :use_stim:     (bool) flag to compile GOTM with STIM
@@ -95,10 +95,12 @@ class Model:
         :extra_output: (bool) flag to output additional turbulence diagnostics
 
         """
-        if not self._is_updated() or force:
+        if clean:
+            print('Cleaning up old build...\n')
             # clean up
             cleanup_dir(self.environ['gotmdir_build'])
             cleanup_dir(self.environ['gotmdir_exe'])
+        if not self._is_updated():
             # build the source code
             cmd = ['cmake']
             cmd.append(self.environ['gotmdir_code'])
@@ -108,9 +110,7 @@ class Model:
             cmd.append('-DGOTM_USE_STIM='+str(use_stim).lower())
             cmd.append('-DGOTM_USE_NetCDF='+str(use_netcdf).lower())
             cmd.append('-DGOTM_EXTRA_OUTPUT='+str(extra_output).lower())
-            print('-'*64)
-            print('Building GOTM...')
-            print('-'*64+'\n')
+            print('Building GOTM...\n')
             print(' '.join(cmd))
             proc = sp.run(cmd, cwd=self.environ['gotmdir_build'], check=True, stdout=sp.PIPE, text=True)
             print('\n'+proc.stdout+'\n')
@@ -120,7 +120,7 @@ class Model:
             if proc.returncode == 0:
                 print_ok('Done!')
         else:
-            print_warning('GOTM is updated. Skipping the build step. Use \'force=True\' to rebuild')
+            print_warning('GOTM is updated. Skipping the build step. Use \'clean=True\' to rebuild')
 
     def run(self):
         """TODO: Docstring for run.

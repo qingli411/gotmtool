@@ -68,7 +68,7 @@ def print_help():
     print('-'*64)
     print('Setting up GOTM environment')
     print('-'*64)
-    print('Please type in the full path of the file or directory.')
+    print('\nPlease type in the full path of the file or directory.')
     print('Leave it empty to use the default value in parentheses.\n')
 
 def check_file(filename):
