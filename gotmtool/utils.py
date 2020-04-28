@@ -2,6 +2,8 @@
 # Utility
 #--------------------------------
 
+import os
+
 def inquire(message, default):
     """Inquire with message and default answer
 
@@ -18,6 +20,20 @@ def inquire(message, default):
         return default
     else:
         return user_input
+
+def cleanup_dir(top):
+    """Empty a directory
+
+    :top:  (str) directory name
+
+    """
+    if(top == '/' or top == '\\'): return
+    else:
+        for root, dirs, files in os.walk(top, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
 
 def print_error(message):
     """Print error message in red

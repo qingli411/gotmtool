@@ -45,25 +45,69 @@ class Model:
         """
         return os.path.isfile(self._exe) and os.access(self._exe, os.X_OK)
 
+    def _is_clean(self):
+        """Check if the source code directory is clean
+
+        :returns: (bool) True if the source code directory is clean, False otherwise
+
+        """
+        # check if the source code directory is clean, return False if dirty
+        cmd = ['git', 'status', '--short']
+        clean_info = sp.run(cmd, cwd=self.environ['gotmdir_code'], check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+        return clean_info.stdout == ''
+
     def _is_updated(self):
         """Check if the executable is updated with the source code
 
         :returns: (bool) True if the GOTM executable is updated, False otherwise
 
         """
-        return True
+        # return False if not built
+        if not self._is_built():
+            return False
+        if not self._is_clean():
+            return False
+        # get the version of the compiled GOTM executable
+        cmd = [self._exe, '--version']
+        version_info = sp.run(cmd, check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+        # get the hash tag of the source code
+        cmd = ['git', 'show', '-s', '--format=%h']
+        hash_info = sp.run(cmd, cwd=self.environ['gotmdir_code'], check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+        # return False if the hash tag does not match the GOTM version
+        return hash_info.stdout.strip() in version_info.stdout
 
-    def build(self):
+    def build(
+            self,
+            force = False,
+            use_cvmix = True,
+            use_fabm = False,
+            use_stim = False,
+            use_netcdf = True,
+            extra_output = False,
+            ):
         """Build GOTM source code
 
+        :force:        (bool) flag to force the build
+        :use_cvmix:    (bool) flag to compile GOTM with CVMix
+        :use_fabm:     (bool) flag to compile GOTM with FABM
+        :use_stim:     (bool) flag to compile GOTM with STIM
+        :use_netcdf:   (bool) flag to compile GOTM with NetCDF
+        :extra_output: (bool) flag to output additional turbulence diagnostics
+
         """
-        if self._is_built() and self._is_updated():
-            print('GOTM is already built and updated')
-        else:
+        if not self._is_updated() or force:
+            # clean up
+            cleanup_dir(self.environ['gotmdir_build'])
+            cleanup_dir(self.environ['gotmdir_exe'])
+            # build the source code
             cmd = ['cmake']
             cmd.append(self.environ['gotmdir_code'])
             cmd.append('-DCMAKE_INSTALL_PREFIX:PATH='+self.environ['gotmdir_exe'])
-            cmd.append('-DGOTM_USE_FABM=false')
+            cmd.append('-DGOTM_USE_CVMIX='+str(use_cvmix).lower())
+            cmd.append('-DGOTM_USE_FABM='+str(use_fabm).lower())
+            cmd.append('-DGOTM_USE_STIM='+str(use_stim).lower())
+            cmd.append('-DGOTM_USE_NetCDF='+str(use_netcdf).lower())
+            cmd.append('-DGOTM_EXTRA_OUTPUT='+str(extra_output).lower())
             print('-'*64)
             print('Building GOTM...')
             print('-'*64+'\n')
@@ -75,6 +119,8 @@ class Model:
             print('\n'+proc.stdout+'\n')
             if proc.returncode == 0:
                 print_ok('Done!')
+        else:
+            print_warning('GOTM is updated. Skipping the build step. Use \'force=True\' to rebuild')
 
     def run(self):
         """TODO: Docstring for run.
