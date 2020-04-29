@@ -115,10 +115,34 @@ class Model:
         else:
             print_warning('GOTM is updated. Skipping the build step. Use \'clean=True\' to rebuild')
 
+    def init_config(
+            self,
+            filename = None,
+            ):
+        """Initialize the configuration file with default values
+
+        :filename: (str) name of the output configuration file
+        :returns:  (dict) configurations in a dictionary
+
+        """
+        if not self._is_built():
+            print_error('Please build GOTM first!')
+        if not self._is_updated():
+            print_warning('GOTM not updated. Please double-check on the generated configuration file')
+        # default output
+        if filename is None:
+            filename = self.environ['gotmdir_run']+'/'+self.name+'/gotm.yaml'
+        # generate configuration file
+        cmd = [self._exe, '--write_yaml', filename]
+        proc = sp.run(cmd, check=True)
+        print('Generating default configuration at \'{:s}\'...'.format(filename))
+        print_ok('Done!')
+        return yaml_load(filename)
+
     def run(
             self,
             config = None,
-            quiet=True,
+            quiet = True,
             ):
         """Run a single instance of the model with the given configuration
 
@@ -147,7 +171,7 @@ class Model:
 
     def run_batch(
             self,
-            configs,
+            configs = None,
             ):
         """Run a batch of instances of the model with given configurations
 

@@ -43,6 +43,7 @@ def yaml_load(filename):
     """Read yaml configuration file
 
     :filename: (str) path of the input file
+    :returns:  (dict) configurations in a dictionary
 
     """
     with open(filename, 'r') as f:
