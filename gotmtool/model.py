@@ -16,25 +16,19 @@ class Model:
     def __init__(
             self,
             name = 'GOTM test',
-            config = None,
             environ = os.environ['HOME']+'/.gotm_env.yaml'
             ):
         """Initialization
 
         :name:    (str) name of the model
-        :config:  (str or dict-like) path of a YAML file or a dictionary containing the GOTM configurations
         :environ: (str or dict-like) path of a YAML file or a dictionary containing the GOTM environment variables
 
         """
-        if config is None:
-            print_error('GOTM configuration required')
-            print_hints('A GOTM configuration can either be a dictionary-like object or a YAML file containing all the configurations')
         if not os.path.exists(environ):
             print_error('GOTM environment file \'{}\' not found'.format(environ))
             print_hints('Please run gotm_env_init.py to set it up')
         self.name = name
-        self.config = config_loader(config)
-        self.environ = config_loader(environ)
+        self.environ = config_load(environ)
         self._exe = self.environ['gotmdir_exe']+'/bin/gotm'
 
     def _is_built(self):
@@ -123,18 +117,23 @@ class Model:
 
     def run(
             self,
+            config = None,
             quiet=True,
             ):
-        """Run the model
+        """Run a single instance of the model with the given configuration
 
+        :config:  (str or dict-like) path of a YAML file or a dictionary containing the GOTM configurations
         :quiet:  (bool) flag to run the model quietly and write a log, otherwise print the log on screen
 
         """
+        if config is None:
+            print_error('GOTM configuration required')
+            print_hints('A GOTM configuration can either be a dictionary-like object or a YAML file containing all the configurations')
         # create run directory
         rundir = self.environ['gotmdir_run']+'/'+self.name
         os.makedirs(rundir, exist_ok=True)
         # write yaml configuration file
-        yaml_dump(self.config, rundir+'/gotm.yaml')
+        config_dump(config, rundir+'/gotm.yaml')
         # run the model
         proc = sp.run(self._exe, cwd=rundir, check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
         if quiet:
@@ -146,3 +145,13 @@ class Model:
             print('\n'+proc.stdout+'\n')
             print_ok('Done!')
 
+    def run_batch(
+            self,
+            configs,
+            ):
+        """Run a batch of instances of the model with given configurations
+
+        :configs: (dict-like) a dictionary with keys being the name of each instance and the values being the configuration for each instance
+
+        """
+        pass

@@ -6,8 +6,9 @@ import os
 import re
 import sys
 from ruamel.yaml import YAML
+from shutil import copy2
 
-def config_loader(config):
+def config_load(config):
     """Load configuration
 
     :config:  (str or dict-like) configurations
@@ -22,6 +23,21 @@ def config_loader(config):
     else:
         out = config
     return out
+
+def config_dump(config, filename):
+    """Dump configuration to file
+
+    :config:    (str or dict-like) configurations
+    :filename:  (str) path of the output file
+
+    """
+    if isinstance(config, str):
+        if os.path.exists(config):
+            copy2(config, filename)
+        else:
+            print_error('Configuration file {:s} not found'.format(config))
+    else:
+        yaml_dump(config, filename)
 
 def yaml_load(filename):
     """Read yaml configuration file

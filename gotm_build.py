@@ -11,12 +11,10 @@ def main():
     """Build GOTM
 
     """
-    # create a model for build
+    # create a model instance for build
     m = Model(
-            # not used in the build step
+            # an arbitrary name, not used in the build step
             name='build',
-            # not used in the build step, but should be a valid .yaml file
-            config='./examples/gotm.yaml',
             # if necessary, change to the GOTM environment file set up
             # by gotm_env_init.py
             environ=os.environ['HOME']+'/.gotm_env.yaml',
