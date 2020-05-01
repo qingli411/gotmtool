@@ -4,6 +4,8 @@
 
 import os
 import subprocess as sp
+import xarray as xr
+from netCDF4 import Dataset
 from .io import *
 from .utils import *
 
@@ -133,6 +135,7 @@ class Model:
         if filename is None:
             filename = self.environ['gotmdir_run']+'/'+self.name+'/gotm.yaml'
         # generate configuration file
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         cmd = [self._exe, '--write_yaml', filename]
         proc = sp.run(cmd, check=True)
         print('Generating default configuration at \'{:s}\'...'.format(filename))
@@ -168,6 +171,7 @@ class Model:
             # print on screen
             print('\n'+proc.stdout+'\n')
             print_ok('Done!')
+        return Simulation(path=rundir, logname='gotm.log', configname='gotm.yaml')
 
     def run_batch(
             self,
@@ -179,3 +183,69 @@ class Model:
 
         """
         pass
+
+#--------------------------------
+# Simulation object
+#--------------------------------
+
+class Simulation:
+
+    """A GOTM simulation
+
+    """
+
+    def __init__(
+            self,
+            path = '',
+            logname = 'gotm.log',
+            configname = 'gotm.yaml',
+            ):
+        """Initialization
+
+        """
+        if not os.path.isdir(path):
+            print_error('Path {:s} not exist'.format(path))
+        else:
+            self.path = path
+            self.log = path+'/'+logname
+            self.config = path+'/'+configname
+            self.data = path+'/gotm_out.nc'
+            self.restart = path+'/restart.nc'
+
+    def load_data(self, **kwargs):
+        """Load data to xarray dataset
+
+        :returns: (xarray.Dataset) simulation output data
+
+        """
+        # load z and zi
+        with Dataset(self.data, 'r') as ncfile:
+            nc_z =  ncfile.variables['z']
+            nc_zi = ncfile.variables['zi']
+            z = xr.DataArray(
+                    nc_z[0,:,0,0],
+                    dims=('z'),
+                    coords={'z': nc_z[0,:,0,0]},
+                    attrs={'long_name': nc_z.long_name, 'units': nc_z.units}
+                    )
+            zi = xr.DataArray(
+                    nc_zi[0,:,0,0],
+                    dims=('zi'),
+                    coords={'zi': nc_zi[0,:,0,0]},
+                    attrs={'long_name': nc_zi.long_name, 'units': nc_zi.units}
+                    )
+        # load other variables
+        out = xr.load_dataset(
+                self.data,
+                drop_variables=['z', 'zi'],
+                **kwargs,
+                )
+        out = out.assign_coords({'z': z})
+        out = out.assign_coords({'zi': zi})
+        for var in out.data_vars:
+            if 'z' in out.data_vars[var].dims:
+                out.data_vars[var].assign_coords({'z':z})
+            elif 'zi' in out.data_vars[var].dims:
+                out.data_vars[var].assign_coords({'zi':zi})
+        # return a reorderd view
+        return out.transpose('z', 'zi', 'time', 'lon', 'lat')
