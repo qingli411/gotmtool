@@ -240,8 +240,10 @@ class Simulation:
                 drop_variables=['z', 'zi'],
                 **kwargs,
                 )
-        out = out.assign_coords({'z': z})
-        out = out.assign_coords({'zi': zi})
+        out = out.assign_coords({
+            'z': z,
+            'zi': zi,
+            })
         for var in out.data_vars:
             if 'z' in out.data_vars[var].dims:
                 out.data_vars[var].assign_coords({'z':z})
