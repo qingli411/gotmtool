@@ -136,7 +136,7 @@ class Model:
             filename = self.environ['gotmdir_run']+'/'+self.name+'/gotm.yaml'
         # generate configuration file
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        cmd = [self._exe, '--write_yaml', filename]
+        cmd = [self._exe, '--write_yaml', filename, '--detail', '2']
         proc = sp.run(cmd, check=True)
         print('Generating default configuration at \'{:s}\'...'.format(filename))
         print_ok('Done!')
