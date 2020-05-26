@@ -36,6 +36,8 @@ def main():
             use_netcdf=True,
             # output extra output for turbulence variables
             extra_output=False,
+            # debug mode
+            debug=False,
             )
 
 if __name__ == "__main__":

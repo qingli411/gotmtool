@@ -80,6 +80,7 @@ class Model:
             use_stim = False,
             use_netcdf = True,
             extra_output = False,
+            debug = False,
             ):
         """Build GOTM source code
 
@@ -89,6 +90,7 @@ class Model:
         :use_stim:     (bool) flag to compile GOTM with STIM
         :use_netcdf:   (bool) flag to compile GOTM with NetCDF
         :extra_output: (bool) flag to output additional turbulence diagnostics
+        :debug:        (bool) flag to build in debug mode
 
         """
         if clean:
@@ -106,6 +108,8 @@ class Model:
             cmd.append('-DGOTM_USE_STIM='+str(use_stim).lower())
             cmd.append('-DGOTM_USE_NetCDF='+str(use_netcdf).lower())
             cmd.append('-DGOTM_EXTRA_OUTPUT='+str(extra_output).lower())
+            if debug:
+                cmd.append('-DCMAKE_BUILD_TYPE=Debug')
             print('Building GOTM...\n')
             print(' '.join(cmd))
             proc = sp.run(cmd, cwd=self.environ['gotmdir_build'], check=True, stdout=sp.PIPE, text=True)
