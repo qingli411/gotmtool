@@ -18,7 +18,7 @@ def main():
     while True:
         envfile = inquire(
                 'GOTM environment configuration file',
-                os.environ['HOME']+'/.gotm_env.yaml',
+                '.gotm_env.yaml',
                 )
         envfile = os.path.expanduser(envfile)
         if check_file(envfile):
@@ -80,6 +80,8 @@ def check_file(filename):
     """
     # expand user's home directory
     filename = os.path.expanduser(filename)
+    # expand absolute path
+    filename = os.path.abspath(filename)
     # check if is a full path
     if filename[0] != '/':
         print_error('Please use the full path')
@@ -110,7 +112,9 @@ def check_dir(dirname):
 
     """
     # expand user's home directory
-    filename = os.path.expanduser(dirname)
+    dirname = os.path.expanduser(dirname)
+    # expand absolute path
+    dirname = os.path.abspath(dirname)
     # check if is a full path
     if dirname[0] != '/':
         print_error('Please use the full path')

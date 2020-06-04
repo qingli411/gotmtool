@@ -18,7 +18,7 @@ class Model:
     def __init__(
             self,
             name = 'GOTM test',
-            environ = os.environ['HOME']+'/.gotm_env.yaml'
+            environ = '../.gotm_env.yaml'
             ):
         """Initialization
 

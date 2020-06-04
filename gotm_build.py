@@ -17,7 +17,7 @@ def main():
             name='build',
             # if necessary, change to the GOTM environment file set up
             # by gotm_env_init.py
-            environ=os.environ['HOME']+'/.gotm_env.yaml',
+            environ='.gotm_env.yaml',
             )
     # build the model
     print('-'*64)
