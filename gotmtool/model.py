@@ -18,7 +18,7 @@ class Model:
     def __init__(
             self,
             name = 'GOTM test',
-            environ = '../.gotm_env.yaml'
+            environ = '.gotm_env.yaml',
             ):
         """Initialization
 
@@ -149,11 +149,13 @@ class Model:
     def run(
             self,
             config = None,
+            label = None,
             quiet = True,
             ):
         """Run a single instance of the model with the given configuration
 
-        :config:  (str or dict-like) path of a YAML file or a dictionary containing the GOTM configurations
+        :config: (str or dict-like) path of a YAML file or a dictionary containing the GOTM configurations
+        :label:  (str) label of the run
         :quiet:  (bool) flag to run the model quietly and write a log, otherwise print the log on screen
 
         """
@@ -161,7 +163,10 @@ class Model:
             print_error('GOTM configuration required')
             print_hints('A GOTM configuration can either be a dictionary-like object or a YAML file containing all the configurations')
         # create run directory
-        rundir = self.environ['gotmdir_run']+'/'+self.name
+        if label is None:
+            rundir = self.environ['gotmdir_run']+'/'+self.name
+        else:
+            rundir = self.environ['gotmdir_run']+'/'+self.name+'/'+label
         os.makedirs(rundir, exist_ok=True)
         # write yaml configuration file
         config_dump(config, rundir+'/gotm.yaml')
@@ -180,13 +185,18 @@ class Model:
     def run_batch(
             self,
             configs = None,
+            labels = None,
             ):
         """Run a batch of instances of the model with given configurations
 
-        :configs: (dict-like) a dictionary with keys being the name of each instance and the values being the configuration for each instance
+        :configs: (array of dict-like) a dictionary with keys being the name of each instance and the values being the configuration for each instance
+        :labels:  (array of str) labels of the runs
 
         """
-        pass
+        sims = []
+        for cfg, lb in zip(configs, labels):
+            sims.append(self.run(config=cfg, label=lb, quiet=None))
+        return sims
 
 #--------------------------------
 # Simulation object
