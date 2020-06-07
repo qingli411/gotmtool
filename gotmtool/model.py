@@ -4,6 +4,7 @@
 
 import os
 import subprocess as sp
+import multiprocessing as mp
 import xarray as xr
 from netCDF4 import Dataset
 from .io import *
@@ -186,16 +187,17 @@ class Model:
             self,
             configs = None,
             labels = None,
+            nproc = 1,
             ):
         """Run a batch of instances of the model with given configurations
 
         :configs: (array of dict-like) a dictionary with keys being the name of each instance and the values being the configuration for each instance
         :labels:  (array of str) labels of the runs
+        :nproc:   (int) number of processes
 
         """
-        sims = []
-        for cfg, lb in zip(configs, labels):
-            sims.append(self.run(config=cfg, label=lb, quiet=None))
+        with mp.Pool(nproc) as pool:
+            sims = pool.starmap(self.run, zip(configs, labels))
         return sims
 
 #--------------------------------
