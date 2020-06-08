@@ -47,7 +47,6 @@ def main():
             if check_dir(tmpdir):
                 break
         dirs['gotmdir_'+name] = tmpdir
-
     # create the GOTM environment file
     print('-'*64)
     print('Writting GOTM environment to \'{:s}\':'.format(envfile))
@@ -57,7 +56,11 @@ def main():
     yaml=YAML()
     with open(envfile, 'w') as f:
         yaml.dump(dirs, f)
-
+    # link examples directory to gotmdir_data
+    try:
+        os.symlink(os.getcwd()+'/examples', dirs['gotmdir_data']+'/examples')
+    except FileExistsError:
+        pass
     # done
     print_ok('Done!')
 
