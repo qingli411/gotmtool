@@ -47,6 +47,8 @@ def main():
             if check_dir(tmpdir):
                 break
         dirs['gotmdir_'+name] = tmpdir
+    # add GOTM tool directory (current directory)
+    dirs['gotmdir_tool'] = os.getcwd()
     # create the GOTM environment file
     print('-'*64)
     print('Writting GOTM environment to \'{:s}\':'.format(envfile))
