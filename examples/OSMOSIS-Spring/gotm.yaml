@@ -519,8 +519,6 @@ cvmix:
          use: false                     # compute interior tidal mixing coefficients [default=false]
       double_diffusion:
          use: false                     # compute interior double diffusion mixing coefficients [default=false]
-   bottom_layer:                        # bottom layer mixing
-      use: false                        # compute bottom layer mixing coefficients [default=false]
 physical_constants:
    gravity: 9.81                        # gravitational acceleration [m/s^2; min=0.0; default=9.81]
    rho_0: 1027.0                        # reference density [kg/m^3; min=0.0; default=1027.0]
