@@ -219,8 +219,10 @@ class Simulation:
     def __init__(
             self,
             path = '',
+            dataname = 'gotm_out.nc',
             logname = 'gotm.log',
             configname = 'gotm.yaml',
+            restartname = 'restart.nc',
             ):
         """Initialization
 
@@ -231,8 +233,8 @@ class Simulation:
             self.path = path
             self.log = path+'/'+logname
             self.config = path+'/'+configname
-            self.data = path+'/gotm_out.nc'
-            self.restart = path+'/restart.nc'
+            self.data = path+'/'+dataname
+            self.restart = path+'/'+restartname
 
     def load_data(self, **kwargs):
         """Load data to xarray dataset
