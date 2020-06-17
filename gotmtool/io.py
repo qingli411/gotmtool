@@ -5,6 +5,7 @@
 import os
 import re
 import sys
+import numpy as np
 from ruamel.yaml import YAML
 from shutil import copy2
 
@@ -67,3 +68,59 @@ def yaml_dump(data, filename):
 def _remove_quotes(s):
     return s.replace('\'', '')
 
+def dat_dump_ts(time, data, filename, skip_value=None):
+    """Write time series in GOTM input format
+
+    :time:       (array-like) array of time in datetime
+    :data:       (list of array-like) array of variables
+    :filename:   (str) filename of output file
+    :skip_value: (float, optional) value in data to skip
+
+    """
+    nt = len(time)
+    if not all(var.shape == (nt,) for var in data):
+        dim_str = '['+' '.join([str(var.shape) for var in data])+']'
+        raise ValueError('Dimension of data {} does not match time ({:d},)'.format(dim_str, nt))
+    with open(filename, 'w') as fout:
+        for i in np.arange(nt):
+            if (not any(np.isnan(var[i]) for var in data)) or (skip_value is None) or (not any(var[i] == skip_value for var in data)):
+                out_str = time[i].strftime('%Y-%m-%d %H:%M:%S')
+                for var in data:
+                    out_str += '  {:10.6g}'.format(var[i])
+                out_str += '\n'
+                fout.write(out_str)
+
+def dat_dump_pfl(time, z, data, filename, skip_value=None, order=2):
+    """Write time series of profile in GOTM input format.
+
+    :time:       (array-like) array of time in datetime
+    :z:          (array-like) array of depth
+    :data:       (list of array-like) array of variables
+    :filename:   (str) filename of output file
+    :skip_value: (float, optional) value in data to skip
+    :order:      (int) data written from bottom to top (z<0 increasing) if 1,
+                       from top to bottom (z<0 decreasing) if 2
+
+    """
+    nt = len(time)
+    nd = len(z)
+    if not all(var.shape == (nt, nd) for var in data):
+        dim_str = '['+' '.join([str(var.shape) for var in data])+']'
+        raise ValueError('Dimension of data {} does not match time ({:d},) and z ({:d},)'.format(dim_str, nt, nd))
+    with open(filename, 'w') as fout:
+        for i in range(nt):
+            fidx = []
+            for j in range(nd):
+                if any(np.isnan(var[i,j]) for var in data) or any(var[i,j] == skip_value for var in data):
+                    fidx.append(j)
+            nskip = len(fidx)
+            if nd-nskip > 0:
+                out_str = '{}  {}  {}\n'.format(time[i].strftime('%Y-%m-%d %H:%M:%S'), nd-nskip, order)
+                fout.write(out_str)
+                for j in range(nd):
+                    if j not in fidx:
+                        out_str = '{:8.2f}'.format(z[j])
+                        for var in data:
+                            out_str += '  {:10.6f}'.format(var[i,j])
+                        out_str += '\n'
+                        fout.write(out_str)
