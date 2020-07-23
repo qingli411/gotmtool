@@ -83,7 +83,7 @@ def dat_dump_ts(time, data, filename, skip_value=None):
         raise ValueError('Dimension of data {} does not match time ({:d},)'.format(dim_str, nt))
     with open(filename, 'w') as fout:
         for i in np.arange(nt):
-            if (not any(np.isnan(var[i]) for var in data)) or (skip_value is None) or (not any(var[i] == skip_value for var in data)):
+            if (skip_value is None) or ((not any(np.isnan(var[i]) for var in data))  and (not any(var[i] == skip_value for var in data))):
                 out_str = time[i].strftime('%Y-%m-%d %H:%M:%S')
                 for var in data:
                     out_str += '  {:10.6g}'.format(var[i])
@@ -110,9 +110,10 @@ def dat_dump_pfl(time, z, data, filename, skip_value=None, order=2):
     with open(filename, 'w') as fout:
         for i in range(nt):
             fidx = []
-            for j in range(nd):
-                if any(np.isnan(var[i,j]) for var in data) or any(var[i,j] == skip_value for var in data):
-                    fidx.append(j)
+            if skip_value is not None:
+                for j in range(nd):
+                    if any(np.isnan(var[i,j]) for var in data) or any(var[i,j] == skip_value for var in data):
+                        fidx.append(j)
             nskip = len(fidx)
             if nd-nskip > 0:
                 out_str = '{}  {}  {}\n'.format(time[i].strftime('%Y-%m-%d %H:%M:%S'), nd-nskip, order)
