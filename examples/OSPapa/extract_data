@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# extract the preprocessed data
+
+for f in *.gz; do
+    echo $f
+    gunzip $f
+done
+

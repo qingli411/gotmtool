@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# compress the preprocessed data
+
+for f in *.dat; do
+    echo $f
+    gzip $f
+done
+

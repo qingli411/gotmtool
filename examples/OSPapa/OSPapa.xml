@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data name="OSPapa" lat="50.1" lon="215.1" maxdepth="300.0">
+    <var name="momentum">
+        <longname>Momentum flux (N/m2)</longname>
+        <filename>tau50n145w_hr.cdf</filename>
+        <vartype>vector</vartype>
+        <varnamex>TX_442</varnamex>
+        <varnamey>TY_443</varnamey>
+        <outname>momentum_flux.dat</outname>
+    </var>
+    <var name="u10">
+        <longname>10-meter wind (m/s)</longname>
+        <filename>wind_10meter_50n145w_hr.cdf</filename>
+        <vartype>vector</vartype>
+        <varnamex>UZS_2422</varnamex>
+        <varnamey>VZS_2423</varnamey>
+        <outname>u10.dat</outname>
+    </var>
+    <var name="heat">
+        <longname>Heat flux excluding shortwave radiation (W/m2)</longname>
+        <filename>heatflux_hr.nc</filename>
+        <vartype>scalar</vartype>
+        <varname>HFLUX</varname>
+        <outname>heat_flux.dat</outname>
+    </var>
+    <var name="swr">
+        <longname>Shortwave radiation (W/m2)</longname>
+        <filename>swnet50n145w_hr.cdf</filename>
+        <vartype>scalar</vartype>
+        <varname>SWN_1495</varname>
+        <outname>swr.dat</outname>
+    </var>
+    <var name="precip">
+        <longname>Precipitation (mm/hour)</longname>
+        <filename>rain_wspd_cor50n145w_hr.cdf</filename>
+        <vartype>scalar</vartype>
+        <varname>RN_485</varname>
+        <outname>precip.dat</outname>
+        <scale_factor>2.77778e-7</scale_factor>
+    </var>
+    <var name="sst">
+        <longname>Sea surface temperature (degC)</longname>
+        <filename>sst50n145w_hr.cdf</filename>
+        <vartype>scalar</vartype>
+        <varname>T_25</varname>
+        <outname>sst.dat</outname>
+    </var>
+    <var name="sss">
+        <longname>Sea surface salinity (psu)</longname>
+        <filename>sss50n145w_hr.cdf</filename>
+        <vartype>scalar</vartype>
+        <varname>S_41</varname>
+        <outname>sss.dat</outname>
+    </var>
+    <var name="t_prof">
+        <longname>Temperature profile (degC)</longname>
+        <filename>t50n145w_hr.cdf</filename>
+        <vartype>scalar</vartype>
+        <varname>T_20</varname>
+        <outname>t_prof.dat</outname>
+    </var>
+    <var name="s_prof">
+        <longname>Salinity profile (psu)</longname>
+        <filename>s50n145w_hr.cdf</filename>
+        <vartype>scalar</vartype>
+        <varname>S_41</varname>
+        <outname>s_prof.dat</outname>
+    </var>
+</data>
+
