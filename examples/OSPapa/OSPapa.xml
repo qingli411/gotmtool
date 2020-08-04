@@ -38,6 +38,14 @@
         <outname>precip.dat</outname>
         <scale_factor>2.77778e-7</scale_factor>
     </var>
+    <var name="emp">
+        <longname>Evaporation - Precipitation (mm/hour)</longname>
+        <filename>emp50n145w_hr.cdf</filename>
+        <vartype>scalar</vartype>
+        <varname>EMP_251</varname>
+        <outname>emp.dat</outname>
+        <scale_factor>2.77778e-7</scale_factor>
+    </var>
     <var name="sst">
         <longname>Sea surface temperature (degC)</longname>
         <filename>sst50n145w_hr.cdf</filename>
@@ -54,14 +62,14 @@
     </var>
     <var name="t_prof">
         <longname>Temperature profile (degC)</longname>
-        <filename>t50n145w_hr.cdf</filename>
+        <filename>t50n145w_dy.cdf</filename>
         <vartype>scalar</vartype>
         <varname>T_20</varname>
         <outname>t_prof.dat</outname>
     </var>
     <var name="s_prof">
         <longname>Salinity profile (psu)</longname>
-        <filename>s50n145w_hr.cdf</filename>
+        <filename>s50n145w_dy.cdf</filename>
         <vartype>scalar</vartype>
         <varname>S_41</varname>
         <outname>s_prof.dat</outname>
