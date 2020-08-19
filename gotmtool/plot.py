@@ -4,6 +4,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
 
 def plot_dist_3p(
         hst,
