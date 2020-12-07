@@ -4,6 +4,6 @@
 
 for f in *.dat; do
     echo $f
-    gzip $f
+    gzip -k $f
 done
 
