@@ -23,12 +23,12 @@ def get_mld_deltaT(Temp, deltaT=0.2, zRef=-10):
         idx_zref = np.argmin(np.abs(z-zRef))
         dT = t[:,i]-t[idx_zref,i]
         # ignore the points above the reference level
-        dT[idx_zref:] = 99.
+        dT[idx_zref:] = 0.
         # ignore nan
-        dT[np.isnan(dT)] = 99.
+        dT[np.isnan(dT)] = 0.
         # find the maximum index (closest to the surface) where the temperature
         # difference is greater than the threshold value
-        idxlist = np.where(dT<=-deltaT)
+        idxlist = np.where(np.abs(dT)>=deltaT)
         if idxlist[0].size>0:
             idx_min = np.max(idxlist)
             mld_val[i] = z[idx_min]
