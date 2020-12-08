@@ -63,8 +63,16 @@ def main():
         os.symlink(os.getcwd()+'/examples', dirs['gotmdir_data']+'/examples')
     except FileExistsError:
         pass
+    # check out GOTM source code
+    yn = inquire('\nDownload GOTM source code from Github (https://github.com/gotm-model/code.git)? Type in \'y\' to confirm and \'n\' to skip', 'n')
+    if yn == 'y':
+        rc = install_gotm(dirs['gotmdir_code'])
+    else:
+        rc = 0
     # done
-    print_ok('Done!')
+    if rc == 0:
+        print('-'*64)
+        print_ok('Done!')
 
 def print_help():
     """Print help information
@@ -143,6 +151,20 @@ def check_dir(dirname):
             print_error(e.__str__())
             print('Please try again')
             return False
+
+def install_gotm(path):
+    """Install GOTM source code
+
+    :path: (str) full path of the GOTM source code directory
+
+    """
+    rc1 = os.system('git clone https://github.com/gotm-model/code.git {}'.format(path))
+    cwd = os.getcwd()
+    os.chdir(path)
+    rc2 = os.system('git submodule update --init --recursive')
+    os.chdir(cwd)
+    return rc1+rc2
+
 
 if __name__ == "__main__":
     main()
