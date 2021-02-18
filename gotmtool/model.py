@@ -250,13 +250,13 @@ class Simulation:
                     nc_z[0,:,0,0],
                     dims=('z'),
                     coords={'z': nc_z[0,:,0,0]},
-                    attrs={'long_name': nc_z.long_name, 'units': nc_z.units}
+                    attrs={'long_name': nc_z.long_name.decode(), 'units': nc_z.units.decode()}
                     )
             zi = xr.DataArray(
                     nc_zi[0,:,0,0],
                     dims=('zi'),
                     coords={'zi': nc_zi[0,:,0,0]},
-                    attrs={'long_name': nc_zi.long_name, 'units': nc_zi.units}
+                    attrs={'long_name': nc_zi.long_name.decode(), 'units': nc_zi.units.decode()}
                     )
         # load other variables
         out = xr.load_dataset(
