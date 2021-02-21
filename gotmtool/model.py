@@ -68,7 +68,7 @@ class Model:
         cmd = [self._exe, '--version']
         version_info = sp.run(cmd, check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
         # get the hash tag of the source code
-        cmd = ['git', 'show', '-s', '--format=%h']
+        cmd = ['git', 'describe', '--always', '--dirty']
         hash_info = sp.run(cmd, cwd=self.environ['gotmdir_code'], check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
         # return False if the hash tag does not match the GOTM version
         return hash_info.stdout.strip() in version_info.stdout
