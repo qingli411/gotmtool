@@ -142,13 +142,8 @@ class Model:
         # generate configuration file
         workdir = os.path.dirname(os.path.abspath(filename))
         os.makedirs(workdir, exist_ok=True)
-        try:
-            os.symlink(self.environ['gotmdir_tool']+'/examples/output.yaml', workdir+'/output_default.yaml')
-        except FileExistsError:
-            pass
-        cmd = [self._exe, '--write_yaml', filename, '--detail', '2', 'output_default.yaml']
+        cmd = [self._exe, '--write_yaml', filename, '--detail', '2']
         proc = sp.run(cmd, cwd=workdir, check=True)
-        os.unlink(workdir+'/output_default.yaml')
         print('Generating default configuration at \'{:s}\'...'.format(filename))
         print_ok('Done!')
         return yaml_load(filename)
