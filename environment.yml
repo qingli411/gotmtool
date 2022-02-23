@@ -1,0 +1,15 @@
+name: gotm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - netcdf-fortran
+  - gfortran
+  - cmake
+  - xarray
+  - scipy
+  - ruamel.yaml
+  - jupyter
+  - notebook
+  - matplotlib
+prefix: /home/qingli/miniconda3/envs/gotm
