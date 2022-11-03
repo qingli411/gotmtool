@@ -3,8 +3,8 @@ channels:
   - conda-forge
 dependencies:
   - python=3.9
+  - gfortran=11
   - netcdf-fortran
-  - gfortran
   - cmake
   - xarray
   - scipy
@@ -12,4 +12,3 @@ dependencies:
   - jupyter
   - notebook
   - matplotlib
-prefix: /home/qingli/miniconda3/envs/gotm
