@@ -58,6 +58,10 @@ def main():
     yaml=YAML()
     with open(envfile, 'w') as f:
         yaml.dump(dirs, f)
+    # process examples
+    print('Processing examples...')
+    process_examples()
+    print('-'*64)
     # link examples directory to gotmdir_data
     try:
         os.symlink(os.getcwd()+'/examples', dirs['gotmdir_data']+'/examples')
@@ -166,6 +170,24 @@ def install_gotm(path):
     os.chdir(cwd)
     return rc1+rc2+rc3
 
+def process_examples():
+    """Process data for examples.
+    :returns: None
+
+    """
+    cwd = os.getcwd()
+    path = os.path.join(cwd, 'examples')
+    examples = os.listdir(path)
+    exes = ['extract_data']
+    for case in examples:
+        casedir = os.path.join(path, case)
+        print(' - {}'.format(case))
+        for exe in exes:
+            if os.path.isfile(os.path.join(casedir, exe)):
+                os.chdir(casedir)
+                rc = os.system(os.path.join('.', exe))
+    os.chdir(cwd)
+    return None
 
 if __name__ == "__main__":
     main()
