@@ -165,7 +165,7 @@ def install_gotm(path):
     rc1 = os.system('git clone https://github.com/gotm-model/code.git {}'.format(path))
     cwd = os.getcwd()
     os.chdir(path)
-    rc2 = os.system('git checkout v6.0.3')
+    rc2 = os.system('git checkout v6.0.4')
     rc3 = os.system('git submodule update --init --recursive')
     os.chdir(cwd)
     return rc1+rc2+rc3
