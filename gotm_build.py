@@ -29,7 +29,7 @@ def main():
             # build with CVMix
             use_cvmix=True,
             # build with FABM
-            use_fabm=False,
+            use_fabm=True,
             # build with STIM
             use_stim=False,
             # build with NetCDF
