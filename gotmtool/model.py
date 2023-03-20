@@ -152,12 +152,14 @@ class Model:
             self,
             config = None,
             label = None,
+            config_fabm = None,
             quiet = True,
             ):
         """Run a single instance of the model with the given configuration
 
         :config: (str or dict-like) path of a YAML file or a dictionary containing the GOTM configurations
         :label:  (str) label of the run
+        :config_fabm: (str or dict-like) path of a YAML file or a dictionary containing the FABM configurations
         :quiet:  (bool) flag to run the model quietly and write a log, otherwise print the log on screen
 
         """
@@ -172,6 +174,8 @@ class Model:
         os.makedirs(rundir, exist_ok=True)
         # write yaml configuration file
         config_dump(config, rundir+'/gotm.yaml')
+        if config_fabm is not None:
+            config_dump(config_fabm, rundir+'/fabm.yaml')
         # run the model
         proc = sp.run(self._exe, cwd=rundir, check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
         if quiet:
@@ -182,23 +186,43 @@ class Model:
             # print on screen
             print('\n'+proc.stdout+'\n')
             print_ok('Done!')
-        return Simulation(path=rundir, logname='gotm.log', configname='gotm.yaml')
+        dataname = '{:s}.nc'.format(next(iter(config['output'])))
+        return Simulation(path=rundir, dataname=dataname, logname='gotm.log', configname='gotm.yaml')
 
     def run_batch(
             self,
             configs = None,
             labels = None,
+            configs_fabm = None,
             nproc = 1,
             ):
         """Run a batch of instances of the model with given configurations
 
         :configs: (array of dict-like) a dictionary with keys being the name of each instance and the values being the configuration for each instance
         :labels:  (array of str) labels of the runs
+        :configs_fabm: (array of dict-like) a dictionary with keys being the name of each instance and the values being the configuration for each instance (FABM)
         :nproc:   (int) number of processes
 
         """
-        with mp.Pool(nproc) as pool:
-            sims = pool.starmap(self.run, zip(configs, labels))
+        if configs is None or labels is None:
+            raise TypeError('Both \'configs\' and \'labels\' are required and are expected to be a list')
+        if configs_fabm is None:
+            with mp.Pool(nproc) as pool:
+                sims = pool.starmap(self.run, zip(configs, labels))
+        else:
+            ncfg  = len(configs)
+            ncfgb = len(configs_fabm)
+            nlbl  = len(labels)
+            if ncfg == 1 and ncfgb == nlbl:
+                configs_tmp = configs*ncfgb
+                with mp.Pool(nproc) as pool:
+                    sims = pool.starmap(self.run, zip(configs_tmp, labels, configs_fabm))
+            elif ncfgb == 1 and ncfg == nlbl:
+                configs_tmp = configs_fabm*ncfg
+                with mp.Pool(nproc) as pool:
+                    sims = pool.starmap(self.run, zip(configs, labels, configs_tmp))
+            else:
+                raise ValueError('Multiple configuration for both \'configs\' and \'configs_fabm\' is not supported.')
         return sims
 
 #--------------------------------
