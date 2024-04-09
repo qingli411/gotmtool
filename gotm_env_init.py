@@ -68,9 +68,13 @@ def main():
     except FileExistsError:
         pass
     # check out GOTM source code
-    yn = inquire('\nDownload GOTM source code from Github (https://github.com/gotm-model/code.git)? Type in \'y\' to confirm and \'n\' to skip', 'n')
+    default_repo = 'https://github.com/gotm-model/code.git'
+    default_branch = 'master'
+    yn = inquire('\nDownload GOTM source code from a git repository? Type in \'y\' to confirm and \'n\' to skip', 'n')
     if yn == 'y':
-        rc = install_gotm(dirs['gotmdir_code'])
+        gotm_repo = inquire('Repository URL', default_repo)
+        gotm_branch = inquire('Branch name', default_branch)
+        rc = install_gotm(gotm_repo, gotm_branch, dirs['gotmdir_code'])
     else:
         rc = 0
     # done
@@ -156,16 +160,18 @@ def check_dir(dirname):
             print('Please try again')
             return False
 
-def install_gotm(path):
+def install_gotm(repo, branch, path):
     """Install GOTM source code
 
-    :path: (str) full path of the GOTM source code directory
+    :repo:   (str) git repository of the GOTM source code
+    :branch: (str) branch name of the GOTM source code
+    :path:   (str) full path of the GOTM source code directory
 
     """
-    rc1 = os.system('git clone https://github.com/gotm-model/code.git {}'.format(path))
+    rc1 = os.system('git clone {:s} {:s}'.format(repo, path))
     cwd = os.getcwd()
     os.chdir(path)
-    rc2 = os.system('git checkout v6.0.3')
+    rc2 = os.system('git checkout {:s}'.format(branch))
     rc3 = os.system('git submodule update --init --recursive')
     os.chdir(cwd)
     return rc1+rc2+rc3
