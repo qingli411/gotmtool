@@ -68,13 +68,14 @@ def yaml_dump(data, filename):
 def _remove_quotes(s):
     return s.replace('\'', '')
 
-def dat_dump_ts(time, data, filename, skip_value=None):
+def dat_dump_ts(time, data, filename, skip_value=None, scale_factor=1.):
     """Write time series in GOTM input format
 
-    :time:       (array-like) array of time in datetime
-    :data:       (list of array-like) array of variables
-    :filename:   (str) filename of output file
-    :skip_value: (float, optional) value in data to skip
+    :time:         (array-like) array of time in datetime
+    :data:         (list of array-like) array of variables
+    :filename:     (str) filename of output file
+    :skip_value:   (float, optional) value in data to skip
+    :scale_factor: (float, optional) scale factor to be applied to data
 
     """
     nt = len(time)
@@ -86,19 +87,20 @@ def dat_dump_ts(time, data, filename, skip_value=None):
             if (skip_value is None) or ((not any(np.isnan(var[i]) for var in data))  and (not any(var[i] == skip_value for var in data))):
                 out_str = time[i].strftime('%Y-%m-%d %H:%M:%S')
                 for var in data:
-                    out_str += '  {:10.6g}'.format(var[i])
+                    out_str += '  {:10.6g}'.format(var[i]*scale_factor)
                 out_str += '\n'
                 fout.write(out_str)
 
-def dat_dump_pfl(time, z, data, filename, skip_value=None, order=2):
+def dat_dump_pfl(time, z, data, filename, skip_value=None, scale_factor=1., order=2):
     """Write time series of profile in GOTM input format.
 
-    :time:       (array-like) array of time in datetime
-    :z:          (array-like) array of depth
-    :data:       (list of array-like) array of variables
-    :filename:   (str) filename of output file
-    :skip_value: (float, optional) value in data to skip
-    :order:      (int) data written from bottom to top (z<0 increasing) if 1,
+    :time:         (array-like) array of time in datetime
+    :z:            (array-like) array of depth
+    :data:         (list of array-like) array of variables
+    :filename:     (str) filename of output file
+    :skip_value:   (float, optional) value in data to skip
+    :scale_factor: (float, optional) scale factor to be applied to data
+    :order:        (int) data written from bottom to top (z<0 increasing) if 1,
                        from top to bottom (z<0 decreasing) if 2
 
     """
@@ -122,6 +124,6 @@ def dat_dump_pfl(time, z, data, filename, skip_value=None, order=2):
                     if j not in fidx:
                         out_str = '{:8.2f}'.format(z[j])
                         for var in data:
-                            out_str += '  {:10.6f}'.format(var[i,j])
+                            out_str += '  {:10.6f}'.format(var[i,j]*scale_factor)
                         out_str += '\n'
                         fout.write(out_str)
