@@ -173,7 +173,12 @@ class Model:
         # write yaml configuration file
         config_dump(config, rundir+'/gotm.yaml')
         # run the model
-        proc = sp.run(self._exe, cwd=rundir, check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+        try:
+            proc = sp.run(self._exe, cwd=rundir, check=True, stdout=sp.PIPE, stderr=sp.STDOUT, text=True)
+        except sp.CalledProcessError as e:
+            print_error('GOTM run failed. Please see error messages below\n')
+            print(e.output)
+            return
         if quiet:
             # write to log
             with open(rundir+'/gotm.log', 'w') as f:
