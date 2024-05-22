@@ -268,6 +268,10 @@ class Simulation:
             'z': z,
             'zi': zi,
             })
+        out = out.assign_coords({
+            'z_2d': (('time', 'z'), nc_z[:,:,0,0]),
+            'zi_2d': (('time', 'zi'), nc_zi[:,:,0,0]),
+            })
         for var in out.data_vars:
             if 'z' in out.data_vars[var].dims:
                 out.data_vars[var].assign_coords({'z':z})
