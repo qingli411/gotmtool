@@ -162,7 +162,7 @@ def _get_grid(z):
     z     = np.array(z)
     nz    = z.size
     if nz == 1:
-        dz = 1.e6 # an arbitrarily large number
+        dz = np.ones(1)*1.e6 # an arbitrarily large number
         zi = z
     else:
         dz = np.zeros_like(z)
