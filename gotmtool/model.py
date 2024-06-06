@@ -6,7 +6,7 @@ import os
 import subprocess as sp
 import multiprocessing as mp
 import xarray as xr
-from scipy.io import netcdf
+from scipy.io import netcdf_file
 from .io import *
 from .utils import *
 
@@ -243,7 +243,7 @@ class Simulation:
 
         """
         # load z and zi
-        with netcdf.netcdf_file(self.data, 'r', mmap=False) as ncfile:
+        with netcdf_file(self.data, 'r', mmap=False) as ncfile:
             nc_z  = ncfile.variables['z']
             nc_zi = ncfile.variables['zi']
             z = xr.DataArray(
