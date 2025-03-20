@@ -173,3 +173,42 @@ def _get_grid(z):
         zi[1:] = -np.cumsum(dz)
     return dz, zi
 
+def stokes_drift_usp(
+        z,
+        freq,
+        ussp,
+        vssp,
+        ):
+    """Compute Stokes drift profile from partitioned Stokes drift
+
+    :z:           (array-like) depth < 0 (m)
+    :freq:        (array-like) band center wave frequency (Hz)
+    :ussp:        (array-like) x-component of partitioned Stokes drift (m/s)
+    :vssp:        (array-like) y-component of partitioned Stokes drift (m/s)
+    :returns:     (array-like) Stokes drift at z (x- and y-components)
+
+    """
+    z     = np.array(z)
+    freq  = np.array(freq)
+    ussp  = np.array(ussp)
+    vssp  = np.array(vssp)
+    us    = np.zeros_like(z)
+    vs    = np.zeros_like(z)
+    nfreq = freq.size
+    nz    = z.size
+    const = 8. * np.pi**2 / gravity
+    factor = const * freq**2
+    # get vertical grid
+    dz, _ = _get_grid(z)
+    # Stokes drift averaged over the grid cell
+    for i in np.arange(nz):
+        for j in np.arange(nfreq):
+            kdz = factor[j] * dz[i] / 2.
+            if kdz < 100.:
+                tmp = np.sinh(kdz) / kdz * np.exp(factor[j]*z[i])
+            else:
+                tmp = np.exp(factor[j]*z[i])
+            us[i] += tmp * ussp[j]
+            vs[i] += tmp * vssp[j]
+    return us, vs
+
