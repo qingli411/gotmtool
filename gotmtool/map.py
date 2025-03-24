@@ -171,6 +171,7 @@ class GOTMMap(object):
             raise ValueError('The dimension of mask does not match.')
         dat = self.data
         self.data = np.where(mask.data==0, mask_data, dat)
+        return self
 
     def plot(self, ax=None, levels=None, add_colorbar=True, cmap='rainbow', **kwargs):
         """Plot scatters on a map
