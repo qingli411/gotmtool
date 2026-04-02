@@ -61,4 +61,6 @@ ERROR: GOTM environment file '.gotm_env.yaml' not found
 $ python gotm_build.py
 ```
 
+To make sure that the `gfortran` compiler installed in the `gotm` conda environment is correctly used, it may be helpful to set the environment variable `FC=gfortran` before running `gotm_build.py`.
+
 You can also skip this step here and compile gotm when setting up the test case in Jupyter notebook. Please see the notebooks in `./examples` for a few examples.
